@@ -27,7 +27,7 @@
 import UIKit
 
 extension UIApplication {
-    public class func topViewController(base: UIViewController? = UIApplication.sharedApplication().keyWindow?.rootViewController) -> UIViewController? {
+    class func topViewController(base: UIViewController? = UIApplication.sharedApplication().keyWindow?.rootViewController) -> UIViewController? {
         
         if let nav = base as? UINavigationController {
             return topViewController(nav.visibleViewController)

@@ -460,6 +460,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 602328BA26540F29A4CDDCC4 /* Pods-TLTMediaSelector.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -481,6 +482,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EF1F58BFB039D1C47020DB1E /* Pods-TLTMediaSelector.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;

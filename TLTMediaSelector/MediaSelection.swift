@@ -71,6 +71,8 @@ public class MediaSelection: NSObject {
     public var defaultsToFrontCamera = false
     
     public var videoMaximumDuration = NSTimeInterval()
+    
+    public var videoQuality = UIImagePickerControllerQualityType.TypeHigh
 
     // Need to set this when using the control on an iPad
     public var presentingView: UIView? = nil
@@ -247,6 +249,7 @@ public class MediaSelection: NSObject {
                 // set the media type: photo or video
                 self.imagePicker.allowsEditing = self.allowsEditing
                 self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
+                self.imagePicker.videoQuality = self.videoQuality
                 var mediaTypes = [String]()
                 if self.allowsPhoto {
                     mediaTypes.append(String(kUTTypeImage))

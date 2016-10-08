@@ -18,6 +18,11 @@ class ViewController: UIViewController {
             (photo: UIImage, info: [NSObject : AnyObject]) -> Void in
             NSLog("did get photo")
         }
+
+        mediaSelector.didGetVideo = {
+            (video: NSURL, info: [NSObject : AnyObject]) -> Void in
+            NSLog("did get video")
+        }
     }
 
     @IBAction func selectImage(sender: AnyObject) {
@@ -31,5 +36,19 @@ class ViewController: UIViewController {
         mediaSelector.present()
     }
 
+    @IBAction func selectVideo(sender: AnyObject) {
+        mediaSelector.title = "Select Video"
+        mediaSelector.subtitle = "Select your video among one of these sources"
+        mediaSelector.allowsPhoto = false
+        mediaSelector.allowsVideo = true
+        mediaSelector.allowsEditing = true
+        mediaSelector.videoMaximumDuration = 10
+        mediaSelector.defaultsToFrontCamera = true
+        mediaSelector.buttonBackgroundColor = UIColor.init(white: 0.8, alpha: 1.0)
+        // Required for the iPad
+        mediaSelector.presentingView = sender as? UIView
+        mediaSelector.present()
+    }
+    
 }
 

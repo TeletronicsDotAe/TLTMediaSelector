@@ -192,17 +192,17 @@ public class MediaSelection: NSObject {
     private func textForButtonWithTitle(title: String) -> String {
         switch title {
         case kTakePhotoKey:
-            return "Take Photo"
+            return self.takePhotoText ?? "Take Photo"
         case kTakeVideoKey:
-            return "Take Video"
+            return self.takeVideoText ?? "Take Video"
         case kChooseFromLibraryKey:
-            return "Use Photo Library"
+            return self.chooseFromLibraryText ?? "Use Photo Library"
         case kChooseFromPhotoRollKey:
-            return "Use Photo Roll"
+            return self.chooseFromPhotoRollText ?? "Use Photo Roll"
         case kCancelKey:
-            return "Cancel"
+            return self.cancelText ?? "Cancel"
         case kNoSourcesKey:
-            return "Not Available"
+            return self.noSourcesText ?? "Not Available"
         default:
             NSLog("Invalid title passed to textForButtonWithTitle:")
             return "ERROR"

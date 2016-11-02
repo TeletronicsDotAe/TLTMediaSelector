@@ -169,24 +169,6 @@ public class MediaSelection: NSObject {
     
     private var alertController: SCLAlertView? = nil
     
-    // This is a hack required on iPad if you want to select a photo and you already have a popup on the screen
-    // see: http://stackoverflow.com/a/34392409/300224
-    private func topViewController(rootViewController: UIViewController) -> UIViewController {
-        var rootViewController = UIApplication.sharedApplication().keyWindow!.rootViewController!
-        repeat {
-            guard let presentedViewController = rootViewController.presentedViewController else {
-                return rootViewController
-            }
-            
-            if let navigationController = rootViewController.presentedViewController as? UINavigationController {
-                rootViewController = navigationController.topViewController ?? navigationController
-                
-            } else {
-                rootViewController = presentedViewController
-            }
-        } while true
-    }
-    
     // MARK: - Localization
     
     private func textForButtonWithTitle(title: String) -> String {
@@ -241,6 +223,10 @@ public class MediaSelection: NSObject {
         let buttonTextColor = self.buttonTextColor ?? UIColor.blackColor()
         for (title, source) in titleToSource {
             alertController!.addButton(self.textForButtonWithTitle(title), backgroundColor: buttonBGColor, textColor: buttonTextColor, showDurationStatus: false, action: {
+                dispatch_async(dispatch_get_main_queue(), {
+                    UIApplication.sharedApplication().statusBarHidden = true
+                })
+
                 self.imagePicker.sourceType = source
                 self.selectedSource = source
                 if source == .Camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.Front) {
@@ -259,15 +245,15 @@ public class MediaSelection: NSObject {
                 }
                 self.imagePicker.mediaTypes = mediaTypes
 
-                let topVC = self.topViewController(self.presentingViewController)
-
-                if UI_USER_INTERFACE_IDIOM() == .Phone || (source == .Camera && self.iPadUsesFullScreenCamera) {
-                    topVC.presentViewController(self.imagePicker, animated: true, completion: { _ in })
-                } else {
-                    // On iPad use pop-overs.
-                    self.imagePicker.modalPresentationStyle = .Popover
-                    self.imagePicker.popoverPresentationController?.sourceView = self.presentingView
-                    topVC.presentViewController(self.imagePicker, animated:true, completion:nil)
+                if let topVC = UIApplication.topViewController() {
+                    if UI_USER_INTERFACE_IDIOM() == .Phone || (source == .Camera && self.iPadUsesFullScreenCamera) {
+                        topVC.presentViewController(self.imagePicker, animated: true, completion: { _ in })
+                    } else {
+                        // On iPad use pop-overs.
+                        self.imagePicker.modalPresentationStyle = .Popover
+                        self.imagePicker.popoverPresentationController?.sourceView = self.presentingView
+                        topVC.presentViewController(self.imagePicker, animated:true, completion:nil)
+                    }
                 }
             })
         }
@@ -301,11 +287,10 @@ public class MediaSelection: NSObject {
 
 extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
     public func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        UIApplication.sharedApplication().statusBarHidden = true
         let mediaType: String = info[UIImagePickerControllerMediaType] as! String
-        var imageToSave: UIImage
         // Handle a still image capture
         if mediaType == kUTTypeImage as String {
+            var imageToSave: UIImage
             if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
                 imageToSave = editedImage
             } else if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
@@ -337,7 +322,6 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
         } else if mediaType == kUTTypeMovie as String {
             self.didGetVideo?(video: info[UIImagePickerControllerMediaURL] as! NSURL, info: info)
         }
-        
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
     

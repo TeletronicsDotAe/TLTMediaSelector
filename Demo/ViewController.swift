@@ -28,6 +28,8 @@ class ViewController: UIViewController {
     @IBAction func selectImage(sender: AnyObject) {
         mediaSelector.title = "Select Image"
         mediaSelector.subtitle = "Select your image among one of these sources"
+        mediaSelector.allowsPhoto = true
+        mediaSelector.allowsVideo = false
         mediaSelector.allowsMasking = true
         mediaSelector.defaultsToFrontCamera = true
         mediaSelector.buttonBackgroundColor = UIColor.init(white: 0.8, alpha: 1.0)

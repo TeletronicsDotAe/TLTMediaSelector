@@ -33,7 +33,8 @@ import SCLAlertView
 import RSKImageCropper
 
 public class MediaSelection: NSObject {
-
+    private var statusBarEntryState = true
+    
     public override init() {
         super.init()
     }
@@ -195,6 +196,8 @@ public class MediaSelection: NSObject {
      *  Presents the user with an option to take a photo or choose a photo from the library
      */
     public func present() {
+        self.statusBarEntryState = UIApplication.sharedApplication().statusBarHidden
+        
         var titleToSource = [(buttonTitle: String, source: UIImagePickerControllerSourceType)]()
         
         if self.allowsTake && UIImagePickerController.isSourceTypeAvailable(.Camera) {
@@ -226,7 +229,6 @@ public class MediaSelection: NSObject {
                 dispatch_async(dispatch_get_main_queue(), {
                     UIApplication.sharedApplication().statusBarHidden = true
                 })
-
                 self.imagePicker.sourceType = source
                 self.selectedSource = source
                 if source == .Camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.Front) {
@@ -290,7 +292,11 @@ public class MediaSelection: NSObject {
      */
     public func dismiss() {
         alertController?.dismissViewControllerAnimated(true, completion: nil)
-        imagePicker.dismissViewControllerAnimated(true, completion: nil)
+        imagePicker.dismissViewControllerAnimated(true) {
+            dispatch_async(dispatch_get_main_queue(), {
+                UIApplication.sharedApplication().statusBarHidden = self.statusBarEntryState
+            })
+        }
     }
     
 }
@@ -332,11 +338,15 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
         } else if mediaType == kUTTypeMovie as String {
             self.didGetVideo?(video: info[UIImagePickerControllerMediaURL] as! NSURL, info: info)
         }
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        imagePicker.dismissViewControllerAnimated(true) {
+            dispatch_async(dispatch_get_main_queue(), {
+                UIApplication.sharedApplication().statusBarHidden = self.statusBarEntryState
+            })
+        }
     }
     
     public func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        UIApplication.sharedApplication().statusBarHidden = true
+        UIApplication.sharedApplication().statusBarHidden = self.statusBarEntryState
         picker.dismissViewControllerAnimated(true, completion: { _ in })
         self.didDeny?()
     }
@@ -345,11 +355,19 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
     
     public func imageCropViewController(controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect) {
         self.didGetPhoto?(photo: croppedImage, info: self.selectedMediaInfo!)
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismissViewControllerAnimated(true) {
+            dispatch_async(dispatch_get_main_queue(), {
+                UIApplication.sharedApplication().statusBarHidden = self.statusBarEntryState
+            })
+        }
     }
     
     public func imageCropViewControllerDidCancelCrop(controller: RSKImageCropViewController) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismissViewControllerAnimated(true) {
+            dispatch_async(dispatch_get_main_queue(), {
+                UIApplication.sharedApplication().statusBarHidden = self.statusBarEntryState
+            })
+        }
     }
 
 }

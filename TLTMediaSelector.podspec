@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "TLTMediaSelector"
-  s.version          = "1.2.4"
+  s.version          = "1.2.5"
   s.summary          = "Popover control to select media items such as images"
 
 # This description is used to generate tags and improve search results.

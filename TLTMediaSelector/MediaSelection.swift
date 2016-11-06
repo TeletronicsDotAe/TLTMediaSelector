@@ -228,15 +228,16 @@ public class MediaSelection: NSObject {
                     self.imagePicker.cameraDevice = .Front
                 }
                 // set the media type: photo or video
-                self.imagePicker.allowsEditing = false
-                self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
                 self.imagePicker.videoQuality = self.videoQuality
                 var mediaTypes = [String]()
                 if source == UIImagePickerControllerSourceType.PhotoLibrary {
                     if self.allowsPhoto {
+                        self.imagePicker.allowsEditing = false
                         mediaTypes.append(String(kUTTypeImage))
                     }
                     if self.allowsVideo {
+                        self.imagePicker.allowsEditing = true
+                        self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
                         mediaTypes.append(String(kUTTypeMovie))
                     }
                 }

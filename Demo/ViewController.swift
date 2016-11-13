@@ -51,6 +51,20 @@ class ViewController: UIViewController {
         mediaSelector.presentingView = sender as? UIView
         mediaSelector.present()
     }
+
+    @IBAction func selectPhotoOrVideo(sender: AnyObject) {
+        mediaSelector.title = "Select Image or Video"
+        mediaSelector.subtitle = "Select among one of these sources"
+        mediaSelector.allowsPhoto = true
+        mediaSelector.allowsVideo = true
+        mediaSelector.allowsEditing = true
+        mediaSelector.videoMaximumDuration = 10
+        mediaSelector.defaultsToFrontCamera = true
+        mediaSelector.buttonBackgroundColor = UIColor.init(white: 0.8, alpha: 1.0)
+        // Required for the iPad
+        mediaSelector.presentingView = sender as? UIView
+        mediaSelector.present()
+    }
     
 }
 

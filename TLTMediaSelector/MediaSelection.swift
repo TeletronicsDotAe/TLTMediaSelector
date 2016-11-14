@@ -118,7 +118,10 @@ public class MediaSelection: NSObject {
     public var takeVideoText: String? = nil
     
     /// Custom UI text (skips localization)
-    public var chooseFromLibraryText: String? = nil
+    public var chooseFromPhotoLibraryText: String? = nil
+
+    /// Custom UI text (skips localization)
+    public var chooseFromVideoLibraryText: String? = nil
     
     /// Custom UI text (skips localization)
     public var chooseFromPhotoRollText: String? = nil
@@ -138,7 +141,9 @@ public class MediaSelection: NSObject {
     
     private let kTakeVideoKey: String = "takeVideo"
     
-    private let kChooseFromLibraryKey: String = "chooseFromLibrary"
+    private let kChooseFromPhotoLibraryKey: String = "chooseFromPhotoLibrary"
+
+    private let kChooseFromVideoLibraryKey: String = "chooseFromVideoLibrary"
     
     private let kChooseFromPhotoRollKey: String = "chooseFromPhotoRoll"
     
@@ -176,8 +181,10 @@ public class MediaSelection: NSObject {
             return self.takePhotoText ?? "Take Photo"
         case kTakeVideoKey:
             return self.takeVideoText ?? "Take Video"
-        case kChooseFromLibraryKey:
-            return self.chooseFromLibraryText ?? "Use Photo Library"
+        case kChooseFromPhotoLibraryKey:
+            return self.chooseFromPhotoLibraryText ?? "Use Photo Library"
+        case kChooseFromVideoLibraryKey:
+            return self.chooseFromVideoLibraryText ?? "Use Video Library"
         case kChooseFromPhotoRollKey:
             return self.chooseFromPhotoRollText ?? "Use Photo Roll"
         case kCancelKey:
@@ -206,7 +213,12 @@ public class MediaSelection: NSObject {
         }
         if self.allowsSelectFromLibrary {
             if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
-                titleToSource.append((buttonTitle: kChooseFromLibraryKey, source: .PhotoLibrary))
+                if self.allowsPhoto {
+                    titleToSource.append((buttonTitle: kChooseFromPhotoLibraryKey, source: .PhotoLibrary))
+                }
+                if self.allowsVideo {
+                    titleToSource.append((buttonTitle: kChooseFromVideoLibraryKey, source: .PhotoLibrary))
+                }
             } else if UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum) {
                 titleToSource.append((buttonTitle: kChooseFromPhotoRollKey, source: .SavedPhotosAlbum))
             }
@@ -228,26 +240,16 @@ public class MediaSelection: NSObject {
                     self.imagePicker.cameraDevice = .Front
                 }
                 // set the media type: photo or video
-                self.imagePicker.videoQuality = self.videoQuality
                 var mediaTypes = [String]()
-                if source == UIImagePickerControllerSourceType.PhotoLibrary {
-                    if self.allowsPhoto {
-                        self.imagePicker.allowsEditing = false
-                        mediaTypes.append(String(kUTTypeImage))
-                    }
-                    if self.allowsVideo {
-                        self.imagePicker.allowsEditing = true
-                        self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
-                        mediaTypes.append(String(kUTTypeMovie))
-                    }
+                if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
+                    self.imagePicker.videoQuality = self.videoQuality
+                    self.imagePicker.allowsEditing = self.allowsEditing
+                    self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
+                    mediaTypes.append(String(kUTTypeMovie))
                 }
                 else {
-                    if title == self.kTakeVideoKey {
-                        mediaTypes.append(String(kUTTypeMovie))
-                    }
-                    else {
-                        mediaTypes.append(String(kUTTypeImage))
-                    }
+                    self.imagePicker.allowsEditing = false
+                    mediaTypes.append(String(kUTTypeImage))
                 }
                 self.imagePicker.mediaTypes = mediaTypes
 

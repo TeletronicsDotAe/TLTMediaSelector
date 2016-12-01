@@ -31,6 +31,7 @@ import Foundation
 import MobileCoreServices
 import SCLAlertView
 import RSKImageCropper
+import IQAudioRecorderController
 
 public class MediaSelection: NSObject {
     public override init() {
@@ -40,14 +41,27 @@ public class MediaSelection: NSObject {
     public class func getPhotoWithCallback(getPhotoWithCallback callback: (photo: UIImage, info: [NSObject : AnyObject]) -> Void) {
         let mSel = MediaSelection()
         mSel.allowsVideo = false
+        mSel.allowsPhoto = true
+        mSel.allowsVoiceRecording = false
         mSel.didGetPhoto = callback
         mSel.present()
     }
     
     public class func getVideoWithCallback(getVideoWithCallback callback: (video: NSURL, info: [NSObject : AnyObject]) -> Void) {
         let mSel = MediaSelection()
+        mSel.allowsVideo = true
         mSel.allowsPhoto = false
+        mSel.allowsVoiceRecording = false
         mSel.didGetVideo = callback
+        mSel.present()
+    }
+    
+    public class func getVoiceRecordingWithCallback(getVoiceRecordingWithCallback callback: (recording: NSData) -> Void) {
+        let mSel = MediaSelection()
+        mSel.allowsVideo = false
+        mSel.allowsPhoto = false
+        mSel.allowsVoiceRecording = true
+        mSel.didGetVoiceRecording = callback
         mSel.present()
     }
     
@@ -56,6 +70,8 @@ public class MediaSelection: NSObject {
     public var allowsPhoto = true
     
     public var allowsVideo = false
+    
+    public var allowsVoiceRecording = false
     
     public var allowsTake = true
     
@@ -70,6 +86,8 @@ public class MediaSelection: NSObject {
     public var defaultsToFrontCamera = false
     
     public var videoMaximumDuration = NSTimeInterval()
+    
+    public var voiceRecordingMaximumDuration = NSTimeInterval()
     
     public var videoQuality = UIImagePickerControllerQualityType.TypeHigh
 
@@ -88,6 +106,9 @@ public class MediaSelection: NSObject {
     
     /// A video was selected
     public var didGetVideo: ((video: NSURL, info: [NSObject : AnyObject]) -> Void)?
+
+    /// A voice recording was made
+    public var didGetVoiceRecording: ((recording: NSData) -> Void)?
     
     /// The user selected did not attempt to select a photo
     public var didDeny: (() -> Void)?
@@ -110,12 +131,17 @@ public class MediaSelection: NSObject {
     public var appearance: SCLAlertView.SCLAppearance?
     public var buttonBackgroundColor: UIColor?
     public var buttonTextColor: UIColor?
+    public var recorderTintColor: UIColor?
+    public var recorderHighlightedTintColor: UIColor?
 
     /// Custom UI text (skips localization)
     public var takePhotoText: String? = nil
     
     /// Custom UI text (skips localization)
     public var takeVideoText: String? = nil
+
+    /// Custom UI text (skips localization)
+    public var makeVoiceRecordingText: String? = nil
     
     /// Custom UI text (skips localization)
     public var chooseFromPhotoLibraryText: String? = nil
@@ -140,6 +166,8 @@ public class MediaSelection: NSObject {
     private let kTakePhotoKey: String = "takePhoto"
     
     private let kTakeVideoKey: String = "takeVideo"
+
+    private let kMakeVoiceRecordingKey: String = "makeVoiceRecording"
     
     private let kChooseFromPhotoLibraryKey: String = "chooseFromPhotoLibrary"
 
@@ -181,6 +209,8 @@ public class MediaSelection: NSObject {
             return self.takePhotoText ?? "Take Photo"
         case kTakeVideoKey:
             return self.takeVideoText ?? "Take Video"
+        case kMakeVoiceRecordingKey:
+            return self.makeVoiceRecordingText ?? "Voice Recorder"
         case kChooseFromPhotoLibraryKey:
             return self.chooseFromPhotoLibraryText ?? "Use Photo Library"
         case kChooseFromVideoLibraryKey:
@@ -223,6 +253,9 @@ public class MediaSelection: NSObject {
                 titleToSource.append((buttonTitle: kChooseFromPhotoRollKey, source: .SavedPhotosAlbum))
             }
         }
+        if self.allowsVoiceRecording {
+            titleToSource.append((buttonTitle: kMakeVoiceRecordingKey, source: .Camera))
+        }
         
         if let appearance = self.appearance {
             self.alertController = SCLAlertView(appearance: appearance)
@@ -232,36 +265,42 @@ public class MediaSelection: NSObject {
         }
         let buttonBGColor = self.buttonBackgroundColor ?? UIColor.whiteColor()
         let buttonTextColor = self.buttonTextColor ?? UIColor.blackColor()
+        let rTintColor = self.recorderTintColor ?? UIColor.blueColor()
+        let rHighlightedTintColor = self.recorderHighlightedTintColor ?? UIColor.redColor()
         for (title, source) in titleToSource {
             alertController!.addButton(self.textForButtonWithTitle(title), backgroundColor: buttonBGColor, textColor: buttonTextColor, showDurationStatus: false, action: {
-                self.imagePicker.sourceType = source
-                self.selectedSource = source
-                if source == .Camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.Front) {
-                    self.imagePicker.cameraDevice = .Front
-                }
-                // set the media type: photo or video
-                var mediaTypes = [String]()
-                if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
-                    self.imagePicker.videoQuality = self.videoQuality
-                    self.imagePicker.allowsEditing = self.allowsEditing
-                    self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
-                    mediaTypes.append(String(kUTTypeMovie))
+                if title == self.kMakeVoiceRecordingKey {
+                    let controller = IQAudioRecorderViewController()
+                    controller.delegate = self
+                    controller.title = "Recorder"
+                    controller.maximumRecordDuration = self.voiceRecordingMaximumDuration
+                    controller.allowCropping = self.allowsEditing
+                    controller.barStyle = UIBarStyle.Default
+                    controller.normalTintColor = rTintColor
+                    controller.highlightedTintColor = rHighlightedTintColor
+                    self.presentAudioRecorderViewControllerAnimated(controller)
                 }
                 else {
-                    self.imagePicker.allowsEditing = false
-                    mediaTypes.append(String(kUTTypeImage))
-                }
-                self.imagePicker.mediaTypes = mediaTypes
-
-                if let topVC = UIApplication.topViewController() {
-                    if UI_USER_INTERFACE_IDIOM() == .Phone || (source == .Camera && self.iPadUsesFullScreenCamera) {
-                        topVC.presentViewController(self.imagePicker, animated: true, completion: { _ in })
-                    } else {
-                        // On iPad use pop-overs.
-                        self.imagePicker.modalPresentationStyle = .Popover
-                        self.imagePicker.popoverPresentationController?.sourceView = self.presentingView
-                        topVC.presentViewController(self.imagePicker, animated:true, completion:nil)
+                    self.imagePicker.sourceType = source
+                    self.selectedSource = source
+                    if source == .Camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.Front) {
+                        self.imagePicker.cameraDevice = .Front
                     }
+                    // set the media type: photo or video
+                    var mediaTypes = [String]()
+                    if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
+                        self.imagePicker.videoQuality = self.videoQuality
+                        self.imagePicker.allowsEditing = self.allowsEditing
+                        self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
+                        mediaTypes.append(String(kUTTypeMovie))
+                    }
+                    else {
+                        self.imagePicker.allowsEditing = false
+                        mediaTypes.append(String(kUTTypeImage))
+                    }
+                    self.imagePicker.mediaTypes = mediaTypes
+                    
+                    self.presentAVViewController(self.imagePicker, source: source)
                 }
             })
         }
@@ -281,6 +320,20 @@ public class MediaSelection: NSObject {
         }
     }
     
+    func presentAVViewController(controller: UIViewController, source: UIImagePickerControllerSourceType) {
+        if let topVC = UIApplication.topViewController() {
+            if UI_USER_INTERFACE_IDIOM() == .Phone || (source == .Camera && self.iPadUsesFullScreenCamera) {
+                topVC.presentViewController(controller, animated: true, completion: { _ in })
+            }
+            else {
+                // On iPad use pop-overs.
+                controller.modalPresentationStyle = .Popover
+                controller.popoverPresentationController?.sourceView = self.presentingView
+                topVC.presentViewController(controller, animated:true, completion:nil)
+            }
+        }
+    }
+
     /**
      *  Dismisses the displayed view (actionsheet or imagepicker).
      *  Especially handy if the sheet is displayed while suspending the app,
@@ -293,7 +346,7 @@ public class MediaSelection: NSObject {
     
 }
 
-extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate {
+extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate, IQAudioRecorderViewControllerDelegate {
     public func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         let mediaType: String = info[UIImagePickerControllerMediaType] as! String
         // Handle a still image capture
@@ -346,6 +399,17 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
     }
     
     public func imageCropViewControllerDidCancelCrop(controller: RSKImageCropViewController) {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    // MARK: - IQAudioRecorderViewControllerDelegate
+    
+    public func audioRecorderController(controller: IQAudioRecorderViewController, didFinishWithAudioAtPath filePath: String) {
+        NSLog("did finish audio recording \(filePath)")
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    public func audioRecorderControllerDidCancel(controller: IQAudioRecorderViewController) {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 

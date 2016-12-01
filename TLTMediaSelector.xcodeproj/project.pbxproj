@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B0C8B771DF01EDC007CE96D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0C8B761DF01EDC007CE96D /* AVFoundation.framework */; };
+		5B0C8B791DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C8B781DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift */; };
+		5B0C8B7A1DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C8B781DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift */; };
 		5B9B3F581D3F870E00197AEB /* TLTMediaSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9B3F571D3F870E00197AEB /* TLTMediaSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9B3F601D3F891600197AEB /* MediaSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B3F5F1D3F891600197AEB /* MediaSelection.swift */; };
 		5B9B3F641D3F899C00197AEB /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B3F631D3F899C00197AEB /* UIApplicationExtension.swift */; };
@@ -22,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5B0C8B741DF01EA8007CE96D /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		5B0C8B761DF01EDC007CE96D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		5B0C8B781DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MediaSelection+IQAudioRecorderController.swift"; sourceTree = "<group>"; };
 		5B9B3F541D3F870E00197AEB /* TLTMediaSelector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TLTMediaSelector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9B3F571D3F870E00197AEB /* TLTMediaSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLTMediaSelector.h; sourceTree = "<group>"; };
 		5B9B3F591D3F870E00197AEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -55,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B0C8B771DF01EDC007CE96D /* AVFoundation.framework in Frameworks */,
 				C202773E01153DF0C31A1391 /* Pods_Demo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +94,7 @@
 			children = (
 				5B9B3F631D3F899C00197AEB /* UIApplicationExtension.swift */,
 				5B9B3F5F1D3F891600197AEB /* MediaSelection.swift */,
+				5B0C8B781DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift */,
 				5B9B3F571D3F870E00197AEB /* TLTMediaSelector.h */,
 				5B9B3F591D3F870E00197AEB /* Info.plist */,
 			);
@@ -109,6 +117,8 @@
 		B94D089B8CC2A015A45E6AAD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5B0C8B761DF01EDC007CE96D /* AVFoundation.framework */,
+				5B0C8B741DF01EA8007CE96D /* AVKit.framework */,
 				D0CD5F7D2F3FB5B13C687097 /* Pods_Demo.framework */,
 				AC343CFC46D29501AC440F9F /* Pods_TLTMediaSelector.framework */,
 			);
@@ -282,7 +292,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		D20CBABAA7BE09432265B892 /* [CP] Check Pods Manifest.lock */ = {
@@ -297,7 +307,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		E8176120C7B8AB08E8ADC803 /* [CP] Copy Pods Resources */ = {
@@ -323,6 +333,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B9B3F641D3F899C00197AEB /* UIApplicationExtension.swift in Sources */,
+				5B0C8B791DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift in Sources */,
 				5B9B3F601D3F891600197AEB /* MediaSelection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -332,6 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B9B3F7B1D3F90BB00197AEB /* UIApplicationExtension.swift in Sources */,
+				5B0C8B7A1DF02660007CE96D /* MediaSelection+IQAudioRecorderController.swift in Sources */,
 				5B9B3F7C1D3F90BB00197AEB /* MediaSelection.swift in Sources */,
 				5B9B3F6E1D3F90A400197AEB /* ViewController.swift in Sources */,
 				5B9B3F6C1D3F90A400197AEB /* AppDelegate.swift in Sources */,

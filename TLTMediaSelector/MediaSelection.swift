@@ -56,7 +56,7 @@ public class MediaSelection: NSObject {
         mSel.present()
     }
     
-    public class func getVoiceRecordingWithCallback(getVoiceRecordingWithCallback callback: (recording: NSData) -> Void) {
+    public class func getVoiceRecordingWithCallback(getVoiceRecordingWithCallback callback: (recording: String) -> Void) {
         let mSel = MediaSelection()
         mSel.allowsVideo = false
         mSel.allowsPhoto = false
@@ -108,7 +108,7 @@ public class MediaSelection: NSObject {
     public var didGetVideo: ((video: NSURL, info: [NSObject : AnyObject]) -> Void)?
 
     /// A voice recording was made
-    public var didGetVoiceRecording: ((recording: NSData) -> Void)?
+    public var didGetVoiceRecording: ((recording: String) -> Void)?
     
     /// The user selected did not attempt to select a photo
     public var didDeny: (() -> Void)?
@@ -405,7 +405,7 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
     // MARK: - IQAudioRecorderViewControllerDelegate
     
     public func audioRecorderController(controller: IQAudioRecorderViewController, didFinishWithAudioAtPath filePath: String) {
-        NSLog("did finish audio recording \(filePath)")
+        self.didGetVoiceRecording?(recording: filePath)
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 

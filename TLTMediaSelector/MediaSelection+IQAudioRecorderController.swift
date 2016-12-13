@@ -31,25 +31,25 @@ import IQAudioRecorderController
 
 extension MediaSelection {
 
-    func presentAudioRecorderViewControllerAnimated(audioRecorderViewController: IQAudioRecorderViewController) {
+    func presentAudioRecorderViewControllerAnimated(_ audioRecorderViewController: IQAudioRecorderViewController) {
         let navigationController = UINavigationController(rootViewController:audioRecorderViewController)
         
-        navigationController.toolbarHidden = false
-        navigationController.toolbar.translucent = true
+        navigationController.isToolbarHidden = false
+        navigationController.toolbar.isTranslucent = true
         
-        navigationController.navigationBar.translucent = true
+        navigationController.navigationBar.isTranslucent = true
         
         let bs = audioRecorderViewController.barStyle
         audioRecorderViewController.barStyle = bs
         if let topVC = UIApplication.topViewController() {
-            if UI_USER_INTERFACE_IDIOM() == .Phone {
-                topVC.presentViewController(navigationController, animated: true, completion: { _ in })
+            if UI_USER_INTERFACE_IDIOM() == .phone {
+                topVC.present(navigationController, animated: true, completion: { _ in })
             }
             else {
                 // On iPad use pop-overs.
-                navigationController.modalPresentationStyle = .Popover
+                navigationController.modalPresentationStyle = .popover
                 navigationController.popoverPresentationController?.sourceView = self.presentingView
-                topVC.presentViewController(navigationController, animated:true, completion:nil)
+                topVC.present(navigationController, animated:true, completion:nil)
             }
         }
     }

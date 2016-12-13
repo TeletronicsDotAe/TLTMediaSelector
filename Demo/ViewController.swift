@@ -15,17 +15,17 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         mediaSelector.didGetPhoto = {
-            (photo: UIImage, info: [NSObject : AnyObject]) -> Void in
+            (photo: UIImage, info: [AnyHashable: Any]) -> Void in
             NSLog("did get photo")
         }
 
         mediaSelector.didGetVideo = {
-            (video: NSURL, info: [NSObject : AnyObject]) -> Void in
+            (video: URL, info: [AnyHashable: Any]) -> Void in
             NSLog("did get video")
         }
     }
 
-    @IBAction func selectImage(sender: AnyObject) {
+    @IBAction func selectImage(_ sender: AnyObject) {
         mediaSelector.title = "Select Image"
         mediaSelector.subtitle = "Select your image among one of these sources"
         mediaSelector.allowsPhoto = true
@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         mediaSelector.present()
     }
 
-    @IBAction func selectVideo(sender: AnyObject) {
+    @IBAction func selectVideo(_ sender: AnyObject) {
         mediaSelector.title = "Select Video"
         mediaSelector.subtitle = "Select your video among one of these sources"
         mediaSelector.allowsPhoto = false
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
         mediaSelector.present()
     }
 
-    @IBAction func selectPhotoOrVideo(sender: AnyObject) {
+    @IBAction func selectPhotoOrVideo(_ sender: AnyObject) {
         mediaSelector.title = "Select Image or Video"
         mediaSelector.subtitle = "Select among one of these sources"
         mediaSelector.allowsPhoto = true

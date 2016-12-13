@@ -33,12 +33,12 @@ import SCLAlertView
 import RSKImageCropper
 import IQAudioRecorderController
 
-public class MediaSelection: NSObject {
+open class MediaSelection: NSObject {
     public override init() {
         super.init()
     }
     
-    public class func getPhotoWithCallback(getPhotoWithCallback callback: (photo: UIImage, info: [NSObject : AnyObject]) -> Void) {
+    open class func getPhotoWithCallback(getPhotoWithCallback callback: @escaping (_ photo: UIImage, _ info: [AnyHashable: Any]) -> Void) {
         let mSel = MediaSelection()
         mSel.allowsVideo = false
         mSel.allowsPhoto = true
@@ -47,7 +47,7 @@ public class MediaSelection: NSObject {
         mSel.present()
     }
     
-    public class func getVideoWithCallback(getVideoWithCallback callback: (video: NSURL, info: [NSObject : AnyObject]) -> Void) {
+    open class func getVideoWithCallback(getVideoWithCallback callback: @escaping (_ video: URL, _ info: [AnyHashable: Any]) -> Void) {
         let mSel = MediaSelection()
         mSel.allowsVideo = true
         mSel.allowsPhoto = false
@@ -56,7 +56,7 @@ public class MediaSelection: NSObject {
         mSel.present()
     }
     
-    public class func getVoiceRecordingWithCallback(getVoiceRecordingWithCallback callback: (recording: String) -> Void) {
+    open class func getVoiceRecordingWithCallback(getVoiceRecordingWithCallback callback: @escaping (_ recording: String) -> Void) {
         let mSel = MediaSelection()
         mSel.allowsVideo = false
         mSel.allowsPhoto = false
@@ -67,120 +67,120 @@ public class MediaSelection: NSObject {
     
     // MARK: - Configuration options
 
-    public var allowsPhoto = true
+    open var allowsPhoto = true
     
-    public var allowsVideo = false
+    open var allowsVideo = false
     
-    public var allowsVoiceRecording = false
+    open var allowsVoiceRecording = false
     
-    public var allowsTake = true
+    open var allowsTake = true
     
-    public var allowsSelectFromLibrary = true
+    open var allowsSelectFromLibrary = true
     
-    public var allowsEditing = false
+    open var allowsEditing = false
 
-    public var allowsMasking = false
+    open var allowsMasking = false
 
-    public var iPadUsesFullScreenCamera = false
+    open var iPadUsesFullScreenCamera = false
     
-    public var defaultsToFrontCamera = false
+    open var defaultsToFrontCamera = false
     
-    public var videoMaximumDuration = NSTimeInterval()
+    open var videoMaximumDuration = TimeInterval()
     
-    public var voiceRecordingMaximumDuration = NSTimeInterval()
+    open var voiceRecordingMaximumDuration = TimeInterval()
     
-    public var videoQuality = UIImagePickerControllerQualityType.TypeHigh
+    open var videoQuality = UIImagePickerControllerQualityType.typeHigh
 
     // Need to set this when using the control on an iPad
-    public var presentingView: UIView? = nil
+    open var presentingView: UIView? = nil
     
-    public lazy var presentingViewController: UIViewController = {
-        return UIApplication.sharedApplication().keyWindow!.rootViewController!
+    open lazy var presentingViewController: UIViewController = {
+        return UIApplication.shared.keyWindow!.rootViewController!
     }()
     
     
     // MARK: - Callbacks
     
     /// A photo was selected
-    public var didGetPhoto: ((photo: UIImage, info: [NSObject : AnyObject]) -> Void)?
+    open var didGetPhoto: ((_ photo: UIImage, _ info: [AnyHashable: Any]) -> Void)?
     
     /// A video was selected
-    public var didGetVideo: ((video: NSURL, info: [NSObject : AnyObject]) -> Void)?
+    open var didGetVideo: ((_ video: URL, _ info: [AnyHashable: Any]) -> Void)?
 
     /// A voice recording was made
-    public var didGetVoiceRecording: ((recording: String) -> Void)?
+    open var didGetVoiceRecording: ((_ recording: String) -> Void)?
     
     /// The user selected did not attempt to select a photo
-    public var didDeny: (() -> Void)?
+    open var didDeny: (() -> Void)?
     
     /// The user started selecting a photo or took a photo and then hit cancel
-    public var didCancel: (() -> Void)?
+    open var didCancel: (() -> Void)?
     
     /// A photo or video was selected but the ImagePicker had NIL for EditedImage and OriginalImage
-    public var didFail: (() -> Void)?
+    open var didFail: (() -> Void)?
 
-    public var customButtonPressed: (() -> Void)?
+    open var customButtonPressed: (() -> Void)?
     
     // MARK: - Localization overrides
 
-    public var title = "Select"
-    public var subtitle = ""
-    public var headIcon: UIImage?
-    public var headIconBackgroundColor: UIColor?
-    public var customButtonText: String?
-    public var appearance: SCLAlertView.SCLAppearance?
-    public var buttonBackgroundColor: UIColor?
-    public var buttonTextColor: UIColor?
-    public var recorderTintColor: UIColor?
-    public var recorderHighlightedTintColor: UIColor?
+    open var title = "Select"
+    open var subtitle = ""
+    open var headIcon: UIImage?
+    open var headIconBackgroundColor: UIColor?
+    open var customButtonText: String?
+    open var appearance: SCLAlertView.SCLAppearance?
+    open var buttonBackgroundColor: UIColor?
+    open var buttonTextColor: UIColor?
+    open var recorderTintColor: UIColor?
+    open var recorderHighlightedTintColor: UIColor?
 
     /// Custom UI text (skips localization)
-    public var takePhotoText: String? = nil
+    open var takePhotoText: String? = nil
     
     /// Custom UI text (skips localization)
-    public var takeVideoText: String? = nil
+    open var takeVideoText: String? = nil
 
     /// Custom UI text (skips localization)
-    public var makeVoiceRecordingText: String? = nil
+    open var makeVoiceRecordingText: String? = nil
     
     /// Custom UI text (skips localization)
-    public var chooseFromPhotoLibraryText: String? = nil
+    open var chooseFromPhotoLibraryText: String? = nil
 
     /// Custom UI text (skips localization)
-    public var chooseFromVideoLibraryText: String? = nil
+    open var chooseFromVideoLibraryText: String? = nil
     
     /// Custom UI text (skips localization)
-    public var chooseFromPhotoRollText: String? = nil
+    open var chooseFromPhotoRollText: String? = nil
     
     /// Custom UI text (skips localization)
-    public var cancelText: String? = nil
+    open var cancelText: String? = nil
     
     /// Custom UI text (skips localization)
-    public var noSourcesText: String? = nil
+    open var noSourcesText: String? = nil
     
     
-    private var selectedSource: UIImagePickerControllerSourceType?
+    fileprivate var selectedSource: UIImagePickerControllerSourceType?
     
     // MARK: - String constants
     
-    private let kTakePhotoKey: String = "takePhoto"
+    fileprivate let kTakePhotoKey: String = "takePhoto"
     
-    private let kTakeVideoKey: String = "takeVideo"
+    fileprivate let kTakeVideoKey: String = "takeVideo"
 
-    private let kMakeVoiceRecordingKey: String = "makeVoiceRecording"
+    fileprivate let kMakeVoiceRecordingKey: String = "makeVoiceRecording"
     
-    private let kChooseFromPhotoLibraryKey: String = "chooseFromPhotoLibrary"
+    fileprivate let kChooseFromPhotoLibraryKey: String = "chooseFromPhotoLibrary"
 
-    private let kChooseFromVideoLibraryKey: String = "chooseFromVideoLibrary"
+    fileprivate let kChooseFromVideoLibraryKey: String = "chooseFromVideoLibrary"
     
-    private let kChooseFromPhotoRollKey: String = "chooseFromPhotoRoll"
+    fileprivate let kChooseFromPhotoRollKey: String = "chooseFromPhotoRoll"
     
-    private let kCancelKey: String = "cancel"
+    fileprivate let kCancelKey: String = "cancel"
     
-    private let kNoSourcesKey: String = "noSources"
+    fileprivate let kNoSourcesKey: String = "noSources"
 
-    public func isLastPhotoFromCamera() -> Bool {
-        if let source = self.selectedSource where source == .Camera {
+    open func isLastPhotoFromCamera() -> Bool {
+        if let source = self.selectedSource, source == .camera {
             return true
         }
         return false
@@ -189,9 +189,9 @@ public class MediaSelection: NSObject {
     // MARK: - Private
     
     // Used as temporary storage for returned image info from the iOS image picker, in order to pass it back to the caller after crop & scale operations
-    private var selectedMediaInfo: [String : AnyObject]?
+    fileprivate var selectedMediaInfo: [String : AnyObject]?
 
-    private lazy var imagePicker: UIImagePickerController = {
+    fileprivate lazy var imagePicker: UIImagePickerController = {
         [unowned self] in
         let retval = UIImagePickerController()
         retval.delegate = self
@@ -199,11 +199,11 @@ public class MediaSelection: NSObject {
         return retval
         }()
     
-    private var alertController: SCLAlertView? = nil
+    fileprivate var alertController: SCLAlertView? = nil
     
     // MARK: - Localization
     
-    private func textForButtonWithTitle(title: String) -> String {
+    fileprivate func textForButtonWithTitle(_ title: String) -> String {
         switch title {
         case kTakePhotoKey:
             return self.takePhotoText ?? "Take Photo"
@@ -230,31 +230,31 @@ public class MediaSelection: NSObject {
     /**
      *  Presents the user with an option to take a photo or choose a photo from the library
      */
-    public func present() {
+    open func present() {
         var titleToSource = [(buttonTitle: String, source: UIImagePickerControllerSourceType)]()
         
-        if self.allowsTake && UIImagePickerController.isSourceTypeAvailable(.Camera) {
+        if self.allowsTake && UIImagePickerController.isSourceTypeAvailable(.camera) {
             if self.allowsPhoto {
-                titleToSource.append((buttonTitle: kTakePhotoKey, source: .Camera))
+                titleToSource.append((buttonTitle: kTakePhotoKey, source: .camera))
             }
             if self.allowsVideo {
-                titleToSource.append((buttonTitle: kTakeVideoKey, source: .Camera))
+                titleToSource.append((buttonTitle: kTakeVideoKey, source: .camera))
             }
         }
         if self.allowsSelectFromLibrary {
-            if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
+            if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
                 if self.allowsPhoto {
-                    titleToSource.append((buttonTitle: kChooseFromPhotoLibraryKey, source: .PhotoLibrary))
+                    titleToSource.append((buttonTitle: kChooseFromPhotoLibraryKey, source: .photoLibrary))
                 }
                 if self.allowsVideo {
-                    titleToSource.append((buttonTitle: kChooseFromVideoLibraryKey, source: .PhotoLibrary))
+                    titleToSource.append((buttonTitle: kChooseFromVideoLibraryKey, source: .photoLibrary))
                 }
-            } else if UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum) {
-                titleToSource.append((buttonTitle: kChooseFromPhotoRollKey, source: .SavedPhotosAlbum))
+            } else if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+                titleToSource.append((buttonTitle: kChooseFromPhotoRollKey, source: .savedPhotosAlbum))
             }
         }
         if self.allowsVoiceRecording {
-            titleToSource.append((buttonTitle: kMakeVoiceRecordingKey, source: .Camera))
+            titleToSource.append((buttonTitle: kMakeVoiceRecordingKey, source: .camera))
         }
         
         if let appearance = self.appearance {
@@ -263,10 +263,10 @@ public class MediaSelection: NSObject {
         else {
             self.alertController = SCLAlertView()
         }
-        let buttonBGColor = self.buttonBackgroundColor ?? UIColor.whiteColor()
-        let buttonTextColor = self.buttonTextColor ?? UIColor.blackColor()
-        let rTintColor = self.recorderTintColor ?? UIColor.blueColor()
-        let rHighlightedTintColor = self.recorderHighlightedTintColor ?? UIColor.redColor()
+        let buttonBGColor = self.buttonBackgroundColor ?? UIColor.white
+        let buttonTextColor = self.buttonTextColor ?? UIColor.black
+        let rTintColor = self.recorderTintColor ?? UIColor.blue
+        let rHighlightedTintColor = self.recorderHighlightedTintColor ?? UIColor.red
         for (title, source) in titleToSource {
             alertController!.addButton(self.textForButtonWithTitle(title), backgroundColor: buttonBGColor, textColor: buttonTextColor, showDurationStatus: false, action: {
                 if title == self.kMakeVoiceRecordingKey {
@@ -275,7 +275,7 @@ public class MediaSelection: NSObject {
                     controller.title = "Recorder"
                     controller.maximumRecordDuration = self.voiceRecordingMaximumDuration
                     controller.allowCropping = self.allowsEditing
-                    controller.barStyle = UIBarStyle.Default
+                    controller.barStyle = UIBarStyle.default
                     controller.normalTintColor = rTintColor
                     controller.highlightedTintColor = rHighlightedTintColor
                     self.presentAudioRecorderViewControllerAnimated(controller)
@@ -283,8 +283,8 @@ public class MediaSelection: NSObject {
                 else {
                     self.imagePicker.sourceType = source
                     self.selectedSource = source
-                    if source == .Camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.Front) {
-                        self.imagePicker.cameraDevice = .Front
+                    if source == .camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.front) {
+                        self.imagePicker.cameraDevice = .front
                     }
                     // set the media type: photo or video
                     var mediaTypes = [String]()
@@ -312,24 +312,24 @@ public class MediaSelection: NSObject {
         }
 
         if let icon = self.headIcon {
-            let headIconBGColor = self.headIconBackgroundColor ?? UIColor.clearColor()
-            self.alertController!.showCustom(self.title, subTitle: self.subtitle, color: headIconBGColor, icon: icon, closeButtonTitle: "Close")
+            let headIconBGColor = self.headIconBackgroundColor ?? UIColor.clear
+            let _ = self.alertController!.showCustom(self.title, subTitle: self.subtitle, color: headIconBGColor, icon: icon, closeButtonTitle: "Close")
         }
         else {
             self.alertController!.showInfo(self.title, subTitle: self.subtitle, closeButtonTitle: "Close")
         }
     }
     
-    func presentAVViewController(controller: UIViewController, source: UIImagePickerControllerSourceType) {
+    func presentAVViewController(_ controller: UIViewController, source: UIImagePickerControllerSourceType) {
         if let topVC = UIApplication.topViewController() {
-            if UI_USER_INTERFACE_IDIOM() == .Phone || (source == .Camera && self.iPadUsesFullScreenCamera) {
-                topVC.presentViewController(controller, animated: true, completion: { _ in })
+            if UI_USER_INTERFACE_IDIOM() == .phone || (source == .camera && self.iPadUsesFullScreenCamera) {
+                topVC.present(controller, animated: true, completion: { _ in })
             }
             else {
                 // On iPad use pop-overs.
-                controller.modalPresentationStyle = .Popover
+                controller.modalPresentationStyle = .popover
                 controller.popoverPresentationController?.sourceView = self.presentingView
-                topVC.presentViewController(controller, animated:true, completion:nil)
+                topVC.present(controller, animated:true, completion:nil)
             }
         }
     }
@@ -339,15 +339,15 @@ public class MediaSelection: NSObject {
      *  Especially handy if the sheet is displayed while suspending the app,
      *  and you want to go back to a default state of the UI.
      */
-    public func dismiss() {
-        alertController?.dismissViewControllerAnimated(true, completion: nil)
-        imagePicker.dismissViewControllerAnimated(true, completion: nil)
+    open func dismiss() {
+        alertController?.dismiss(animated: true, completion: nil)
+        imagePicker.dismiss(animated: true, completion: nil)
     }
     
 }
 
 extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate, IQAudioRecorderViewControllerDelegate {
-    public func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let mediaType: String = info[UIImagePickerControllerMediaType] as! String
         // Handle a still image capture
         if mediaType == kUTTypeImage as String {
@@ -362,14 +362,14 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
             }
             
             if self.allowsMasking {
-                self.selectedMediaInfo = info
-                picker.dismissViewControllerAnimated(true, completion: {
-                    dispatch_async(dispatch_get_main_queue(), {
+                self.selectedMediaInfo = info as [String : AnyObject]?
+                picker.dismiss(animated: true, completion: {
+                    DispatchQueue.main.async(execute: {
                         let imageCropVC = RSKImageCropViewController(image: imageToSave)
                         imageCropVC.avoidEmptySpaceAroundImage = true
                         imageCropVC.delegate = self
                         if let topVC = UIApplication.topViewController() {
-                            topVC.presentViewController(imageCropVC, animated: true, completion: { _ in })
+                            topVC.present(imageCropVC, animated: true, completion: { _ in })
                         }
                     })
                 })
@@ -378,39 +378,39 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
                 return
             }
             else {
-                self.didGetPhoto?(photo: imageToSave, info: info)
+                self.didGetPhoto?(imageToSave, info)
             }
         } else if mediaType == kUTTypeMovie as String {
-            self.didGetVideo?(video: info[UIImagePickerControllerMediaURL] as! NSURL, info: info)
+            self.didGetVideo?(info[UIImagePickerControllerMediaURL] as! URL, info)
         }
-        imagePicker.dismissViewControllerAnimated(true, completion: nil)
+        imagePicker.dismiss(animated: true, completion: nil)
     }
     
-    public func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        picker.dismissViewControllerAnimated(true, completion: { _ in })
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: { _ in })
         self.didDeny?()
     }
     
     // MARK: - RSKImageCropViewControllerDelegate
     
-    public func imageCropViewController(controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect) {
-        self.didGetPhoto?(photo: croppedImage, info: self.selectedMediaInfo!)
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    public func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect) {
+        self.didGetPhoto?(croppedImage, self.selectedMediaInfo!)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    public func imageCropViewControllerDidCancelCrop(controller: RSKImageCropViewController) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    public func imageCropViewControllerDidCancelCrop(_ controller: RSKImageCropViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
     // MARK: - IQAudioRecorderViewControllerDelegate
     
-    public func audioRecorderController(controller: IQAudioRecorderViewController, didFinishWithAudioAtPath filePath: String) {
-        self.didGetVoiceRecording?(recording: filePath)
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    public func audioRecorderController(_ controller: IQAudioRecorderViewController, didFinishWithAudioAtPath filePath: String) {
+        self.didGetVoiceRecording?(filePath)
+        controller.dismiss(animated: true, completion: nil)
     }
 
-    public func audioRecorderControllerDidCancel(controller: IQAudioRecorderViewController) {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+    public func audioRecorderControllerDidCancel(_ controller: IQAudioRecorderViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
 
 }

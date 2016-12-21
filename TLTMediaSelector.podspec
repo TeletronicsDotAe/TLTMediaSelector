@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "TLTMediaSelector"
-  s.version          = "1.3"
+  s.version          = "2.0"
   s.summary          = "Popover control to select media items such as images"
 
 # This description is used to generate tags and improve search results.
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/TeletronicsDotAe/TLTMediaSelector.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.platform     = :ios, '9.0'
+  s.platform     = :ios, '10.0'
   s.requires_arc = true
 
   s.source_files = 'TLTMediaSelector/**/*.swift'
@@ -35,6 +35,6 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   s.frameworks = 'UIKit'
   s.dependency 'IQAudioRecorderController', '1.2.0'
-  s.dependency 'SCLAlertView', '0.5.9'
-  s.dependency 'RSKImageCropper', '1.5.1'
+  s.dependency 'SCLAlertView', '0.7.0'
+  s.dependency 'RSKImageCropper', '1.5.2'
 end

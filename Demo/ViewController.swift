@@ -33,6 +33,8 @@ class ViewController: UIViewController {
         mediaSelector.allowsMasking = true
         mediaSelector.defaultsToFrontCamera = true
         mediaSelector.buttonBackgroundColor = UIColor.init(white: 0.8, alpha: 1.0)
+        mediaSelector.closeButtonTextColor = .black
+        mediaSelector.closeButtonBackgroundColor = .red
         // Required for the iPad
         mediaSelector.presentingView = sender as? UIView
         mediaSelector.present()

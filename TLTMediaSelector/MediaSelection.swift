@@ -130,6 +130,8 @@ open class MediaSelection: NSObject {
     open var customButtonText: String?
     open var appearance: SCLAlertView.SCLAppearance?
     open var buttonBackgroundColor: UIColor?
+    open var closeButtonBackgroundColor: UIColor?
+    open var closeButtonTextColor: UIColor?
     open var buttonTextColor: UIColor?
     open var recorderTintColor: UIColor?
     open var recorderHighlightedTintColor: UIColor?
@@ -257,12 +259,19 @@ open class MediaSelection: NSObject {
             titleToSource.append((buttonTitle: kMakeVoiceRecordingKey, source: .camera))
         }
         
+        var showDefaultCloseButton = true
+        if closeButtonBackgroundColor != nil && closeButtonTextColor != nil {
+            showDefaultCloseButton = false
+        }
+
         if let appearance = self.appearance {
             self.alertController = SCLAlertView(appearance: appearance)
         }
         else {
-            self.alertController = SCLAlertView()
+            let appearance = SCLAlertView.SCLAppearance(showCloseButton: showDefaultCloseButton)
+            self.alertController = SCLAlertView(appearance: appearance)
         }
+        
         let buttonBGColor = self.buttonBackgroundColor ?? UIColor.white
         let buttonTextColor = self.buttonTextColor ?? UIColor.black
         let rTintColor = self.recorderTintColor ?? UIColor.blue
@@ -310,13 +319,20 @@ open class MediaSelection: NSObject {
                 self.customButtonPressed?()
             })
         }
+        
+        if !showDefaultCloseButton {
+            alertController!.addButton("Close", backgroundColor: closeButtonBackgroundColor, textColor: closeButtonTextColor, showDurationStatus: false, action: {
+                self.alertController?.dismiss(animated: true)
+            })
+        }
 
+        let cbt = showDefaultCloseButton ? "Close" : nil
         if let icon = self.headIcon {
             let headIconBGColor = self.headIconBackgroundColor ?? UIColor.clear
-            let _ = self.alertController!.showCustom(self.title, subTitle: self.subtitle, color: headIconBGColor, icon: icon, closeButtonTitle: "Close")
+            let _ = self.alertController!.showCustom(self.title, subTitle: self.subtitle, color: headIconBGColor, icon: icon, closeButtonTitle: cbt)
         }
         else {
-            self.alertController!.showInfo(self.title, subTitle: self.subtitle, closeButtonTitle: "Close")
+            self.alertController!.showInfo(self.title, subTitle: self.subtitle, closeButtonTitle: cbt)
         }
     }
     

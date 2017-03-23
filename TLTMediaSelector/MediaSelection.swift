@@ -80,6 +80,7 @@ open class MediaSelection: NSObject {
     open var allowsEditing = false
 
     open var allowsMasking = false
+    open var customMaskDatasource: RSKImageCropViewControllerDataSource?
 
     open var iPadUsesFullScreenCamera = false
     
@@ -383,6 +384,7 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
                     DispatchQueue.main.async(execute: {
                         let imageCropVC = RSKImageCropViewController(image: imageToSave)
                         imageCropVC.avoidEmptySpaceAroundImage = true
+                        imageCropVC.dataSource = self.customMaskDatasource
                         imageCropVC.delegate = self
                         if let topVC = UIApplication.topViewController() {
                             topVC.present(imageCropVC, animated: true, completion: { _ in })

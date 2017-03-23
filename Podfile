@@ -3,13 +3,13 @@ use_frameworks!
 
 target 'TLTMediaSelector' do
     pod 'SCLAlertView', '0.7.0'
-    pod 'RSKImageCropper', '1.5.2'
+    pod 'RSKImageCropper', '1.6'
     pod 'IQAudioRecorderController', '1.2.0'
 end
 
 target 'Demo' do
     pod 'SCLAlertView', '0.7.0'
-    pod 'RSKImageCropper', '1.5.2'
+    pod 'RSKImageCropper', '1.6'
     pod 'IQAudioRecorderController', '1.2.0'
 end
 

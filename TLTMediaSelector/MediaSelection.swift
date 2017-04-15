@@ -278,7 +278,7 @@ open class MediaSelection: NSObject {
         let rTintColor = self.recorderTintColor ?? UIColor.blue
         let rHighlightedTintColor = self.recorderHighlightedTintColor ?? UIColor.red
         for (title, source) in titleToSource {
-            alertController!.addButton(self.textForButtonWithTitle(title), backgroundColor: buttonBGColor, textColor: buttonTextColor, showDurationStatus: false, action: {
+            alertController!.addButton(self.textForButtonWithTitle(title), backgroundColor: buttonBGColor, textColor: buttonTextColor, action: {
                 if title == self.kMakeVoiceRecordingKey {
                     let controller = IQAudioRecorderViewController()
                     controller.delegate = self
@@ -316,13 +316,13 @@ open class MediaSelection: NSObject {
         }
         
         if let cbt = self.customButtonText {
-            alertController!.addButton(cbt, backgroundColor: buttonBGColor, textColor: buttonTextColor, showDurationStatus: false, action: {
+            alertController!.addButton(cbt, backgroundColor: buttonBGColor, textColor: buttonTextColor, action: {
                 self.customButtonPressed?()
             })
         }
         
         if !showDefaultCloseButton {
-            alertController!.addButton("Close", backgroundColor: closeButtonBackgroundColor, textColor: closeButtonTextColor, showDurationStatus: false, action: {
+            alertController!.addButton("Close", backgroundColor: closeButtonBackgroundColor, textColor: closeButtonTextColor, action: {
                 self.alertController?.dismiss(animated: true)
             })
         }

@@ -144,6 +144,9 @@ open class MediaSelection: NSObject {
     open var takeVideoText: String? = nil
 
     /// Custom UI text (skips localization)
+    open var takePhotoOrVideoText: String? = nil
+
+    /// Custom UI text (skips localization)
     open var makeVoiceRecordingText: String? = nil
     
     /// Custom UI text (skips localization)
@@ -151,7 +154,10 @@ open class MediaSelection: NSObject {
 
     /// Custom UI text (skips localization)
     open var chooseFromVideoLibraryText: String? = nil
-    
+
+    /// Custom UI text (skips localization)
+    open var chooseFromPhotoOrVideoLibraryText: String? = nil
+
     /// Custom UI text (skips localization)
     open var chooseFromPhotoRollText: String? = nil
     
@@ -170,11 +176,15 @@ open class MediaSelection: NSObject {
     
     fileprivate let kTakeVideoKey: String = "takeVideo"
 
+    fileprivate let kTakePhotoOrVideoKey: String = "takePhotoOrVideo"
+
     fileprivate let kMakeVoiceRecordingKey: String = "makeVoiceRecording"
     
     fileprivate let kChooseFromPhotoLibraryKey: String = "chooseFromPhotoLibrary"
 
     fileprivate let kChooseFromVideoLibraryKey: String = "chooseFromVideoLibrary"
+    
+    fileprivate let kChooseFromPhotoOrVideoLibraryKey : String = "chooseFromPhotoOrVideoLibrary"
     
     fileprivate let kChooseFromPhotoRollKey: String = "chooseFromPhotoRoll"
     
@@ -209,17 +219,21 @@ open class MediaSelection: NSObject {
     fileprivate func textForButtonWithTitle(_ title: String) -> String {
         switch title {
         case kTakePhotoKey:
-            return self.takePhotoText ?? "Take Photo"
+            return self.takePhotoText ?? "Photo"
         case kTakeVideoKey:
-            return self.takeVideoText ?? "Take Video"
+            return self.takeVideoText ?? "Video"
+        case kTakePhotoOrVideoKey:
+            return self.takePhotoOrVideoText ?? "Photo or Video"
         case kMakeVoiceRecordingKey:
             return self.makeVoiceRecordingText ?? "Voice Recorder"
         case kChooseFromPhotoLibraryKey:
-            return self.chooseFromPhotoLibraryText ?? "Use Photo Library"
+            return self.chooseFromPhotoLibraryText ?? "Photo Library"
         case kChooseFromVideoLibraryKey:
-            return self.chooseFromVideoLibraryText ?? "Use Video Library"
+            return self.chooseFromVideoLibraryText ?? "Video Library"
+        case kChooseFromPhotoOrVideoLibraryKey:
+            return self.chooseFromPhotoOrVideoLibraryText ?? "Photo or Video Library"
         case kChooseFromPhotoRollKey:
-            return self.chooseFromPhotoRollText ?? "Use Photo Roll"
+            return self.chooseFromPhotoRollText ?? "Photo Roll"
         case kCancelKey:
             return self.cancelText ?? "Cancel"
         case kNoSourcesKey:
@@ -237,20 +251,26 @@ open class MediaSelection: NSObject {
         var titleToSource = [(buttonTitle: String, source: UIImagePickerControllerSourceType)]()
         
         if self.allowsTake && UIImagePickerController.isSourceTypeAvailable(.camera) {
-            if self.allowsPhoto {
+            if self.allowsPhoto && !self.allowsVideo {
                 titleToSource.append((buttonTitle: kTakePhotoKey, source: .camera))
             }
-            if self.allowsVideo {
+            else if self.allowsVideo && !self.allowsPhoto {
                 titleToSource.append((buttonTitle: kTakeVideoKey, source: .camera))
+            }
+            else {
+                titleToSource.append((buttonTitle: kTakePhotoOrVideoKey, source: .camera))
             }
         }
         if self.allowsSelectFromLibrary {
             if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-                if self.allowsPhoto {
+                if self.allowsPhoto && !self.allowsVideo {
                     titleToSource.append((buttonTitle: kChooseFromPhotoLibraryKey, source: .photoLibrary))
                 }
-                if self.allowsVideo {
+                else if self.allowsVideo && !self.allowsPhoto {
                     titleToSource.append((buttonTitle: kChooseFromVideoLibraryKey, source: .photoLibrary))
+                }
+                else {
+                    titleToSource.append((buttonTitle: kChooseFromPhotoOrVideoLibraryKey, source: .photoLibrary))
                 }
             } else if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
                 titleToSource.append((buttonTitle: kChooseFromPhotoRollKey, source: .savedPhotosAlbum))
@@ -298,7 +318,14 @@ open class MediaSelection: NSObject {
                     }
                     // set the media type: photo or video
                     var mediaTypes = [String]()
-                    if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
+                    if title == self.kTakePhotoOrVideoKey || title == self.kChooseFromPhotoOrVideoLibraryKey {
+                        self.imagePicker.videoQuality = self.videoQuality
+                        self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
+                        self.imagePicker.allowsEditing = false
+                        mediaTypes.append(String(kUTTypeMovie))
+                        mediaTypes.append(String(kUTTypeImage))
+                    }
+                    else if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
                         self.imagePicker.videoQuality = self.videoQuality
                         self.imagePicker.allowsEditing = self.allowsEditing
                         self.imagePicker.videoMaximumDuration = self.videoMaximumDuration

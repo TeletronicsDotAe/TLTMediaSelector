@@ -384,7 +384,7 @@ open class MediaSelection: NSObject {
      *  and you want to go back to a default state of the UI.
      */
     open func dismiss() {
-        alertController?.dismiss(animated: true, completion: nil)
+        alertController?.hideView()
         imagePicker.dismiss(animated: true, completion: nil)
     }
     

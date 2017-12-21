@@ -43,7 +43,7 @@ extension MediaSelection {
         audioRecorderViewController.barStyle = bs
         if let topVC = UIApplication.topViewController() {
             if UI_USER_INTERFACE_IDIOM() == .phone {
-                topVC.present(navigationController, animated: true, completion: { _ in })
+                topVC.present(navigationController, animated: true, completion: { })
             }
             else {
                 // On iPad use pop-overs.

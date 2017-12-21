@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   s.frameworks = 'UIKit'
-  s.dependency 'IQAudioRecorderController', '1.2.0'
+  s.dependency 'IQAudioRecorderController', '1.2.2'
   s.dependency 'SCLAlertView'
-  s.dependency 'RSKImageCropper', '1.6.1'
+  s.dependency 'RSKImageCropper', '2.0.0'
 end

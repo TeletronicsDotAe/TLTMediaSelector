@@ -367,7 +367,7 @@ open class MediaSelection: NSObject {
     func presentAVViewController(_ controller: UIViewController, source: UIImagePickerControllerSourceType) {
         if let topVC = UIApplication.topViewController() {
             if UI_USER_INTERFACE_IDIOM() == .phone || (source == .camera && self.iPadUsesFullScreenCamera) {
-                topVC.present(controller, animated: true, completion: { _ in })
+                topVC.present(controller, animated: true, completion: { })
             }
             else {
                 // On iPad use pop-overs.
@@ -391,6 +391,7 @@ open class MediaSelection: NSObject {
 }
 
 extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate, IQAudioRecorderViewControllerDelegate {
+    
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let mediaType: String = info[UIImagePickerControllerMediaType] as! String
         // Handle a still image capture
@@ -414,7 +415,7 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
                         imageCropVC.dataSource = self.customMaskDatasource
                         imageCropVC.delegate = self
                         if let topVC = UIApplication.topViewController() {
-                            topVC.present(imageCropVC, animated: true, completion: { _ in })
+                            topVC.present(imageCropVC, animated: true, completion: { })
                         }
                     })
                 })
@@ -432,13 +433,13 @@ extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControll
     }
     
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true, completion: { _ in })
+        picker.dismiss(animated: true, completion: { })
         self.didDeny?()
     }
     
     // MARK: - RSKImageCropViewControllerDelegate
     
-    public func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect) {
+    public func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
         self.didGetPhoto?(croppedImage, self.selectedMediaInfo!)
         controller.dismiss(animated: true, completion: nil)
     }

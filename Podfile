@@ -1,16 +1,14 @@
 platform :ios, '10.0'
 use_frameworks!
 
+pod 'SCLAlertView', :git => 'https://github.com/mjrehder/SCLAlertView-Swift.git', :branch => 'master'
+pod 'RSKImageCropper', '2.0.0'
+pod 'IQAudioRecorderController', '1.2.2'
+
 target 'TLTMediaSelector' do
-    pod 'SCLAlertView', '0.7.0'
-    pod 'RSKImageCropper', '1.6.1'
-    pod 'IQAudioRecorderController', '1.2.0'
 end
 
 target 'Demo' do
-    pod 'SCLAlertView', '0.7.0'
-    pod 'RSKImageCropper', '1.6.1'
-    pod 'IQAudioRecorderController', '1.2.0'
 end
 
 post_install do |installer|

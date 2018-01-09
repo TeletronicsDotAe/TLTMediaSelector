@@ -138,6 +138,11 @@ open class MediaSelection: NSObject {
     open var recorderTintColor: UIColor?
     open var recorderHighlightedTintColor: UIColor?
 
+    open var titleFont: UIFont = UIFont.systemFont(ofSize: 18)
+    open var subtitleFont: UIFont = UIFont.systemFont(ofSize: 12)
+    open var buttonTextFont: UIFont = UIFont.systemFont(ofSize: 14)
+    open var closeButtonTextFont: UIFont = UIFont.systemFont(ofSize: 14)
+
     /// Custom UI text (skips localization)
     open var takePhotoText: String? = nil
     
@@ -308,7 +313,7 @@ open class MediaSelection: NSObject {
         var items: [FlexCollectionItem] = []
         for (title, source) in titleToSource {
             let buttonText = self.textForButtonWithTitle(title)
-            let abt = self.applyFontAndColorToString(UIFont.systemFont(ofSize: 14), color: buttonTextColor, text: buttonText)
+            let abt = self.applyFontAndColorToString(self.buttonTextFont, color: buttonTextColor, text: buttonText)
             let menuItem = FlexBaseCollectionItem(reference: UUID().uuidString, text: abt)
             items.append(menuItem)
             menuItem.itemSelectionActionHandler = {
@@ -359,7 +364,7 @@ open class MediaSelection: NSObject {
         }
         
         if let cbt = self.customButtonText {
-            let abt = self.applyFontAndColorToString(UIFont.systemFont(ofSize: 14), color: buttonTextColor, text: cbt)
+            let abt = self.applyFontAndColorToString(self.buttonTextFont, color: buttonTextColor, text: cbt)
             let menuItem = FlexBaseCollectionItem(reference: UUID().uuidString, text: abt)
             items.append(menuItem)
             menuItem.itemSelectionActionHandler = {
@@ -371,7 +376,7 @@ open class MediaSelection: NSObject {
         }
         
         if !showDefaultCloseButton {
-            let abt = self.applyFontAndColorToString(UIFont.systemFont(ofSize: 14), color: closeButtonTextColor ?? .black, text: "Close")
+            let abt = self.applyFontAndColorToString(self.closeButtonTextFont, color: closeButtonTextColor ?? .black, text: "Close")
             let menuItem = FlexBaseCollectionItem(reference: UUID().uuidString, text: abt)
             items.append(menuItem)
             menuItem.itemSelectionActionHandler = {
@@ -387,8 +392,8 @@ open class MediaSelection: NSObject {
             for mi in items {
                 self.alertController?.addMenuItem(mi)
             }
-            let title = self.applyFontAndColorToString(UIFont.systemFont(ofSize: 16), color: .black, text: self.title)
-            let subtitle = self.applyFontAndColorToString(UIFont.systemFont(ofSize: 12), color: .black, text: self.subtitle)
+            let title = self.applyFontAndColorToString(self.titleFont, color: .black, text: self.title)
+            let subtitle = self.applyFontAndColorToString(self.subtitleFont, color: .black, text: self.subtitle)
             if let icon = self.headIcon {
                 self.alertController?.show(title: title, subTitle: subtitle, icon: icon)
             }

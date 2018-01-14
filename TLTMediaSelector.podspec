@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "TLTMediaSelector"
-  s.version          = "3.0"
+  s.version          = "3.1.2"
   s.summary          = "Popover control to select media items such as images"
 
 # This description is used to generate tags and improve search results.
@@ -35,6 +35,6 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   s.frameworks = 'UIKit'
   s.dependency 'IQAudioRecorderController', '1.2.2'
-  s.dependency 'SCLAlertView'
+  s.dependency 'StyledOverlay', '~> 3.2'
   s.dependency 'RSKImageCropper', '2.0.0'
 end

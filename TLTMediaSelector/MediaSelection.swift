@@ -29,7 +29,8 @@
 import UIKit
 import Foundation
 import MobileCoreServices
-import SCLAlertView
+import StyledOverlay
+import MJRFlexStyleComponents
 import RSKImageCropper
 import IQAudioRecorderController
 
@@ -129,13 +130,18 @@ open class MediaSelection: NSObject {
     open var headIcon: UIImage?
     open var headIconBackgroundColor: UIColor?
     open var customButtonText: String?
-    open var appearance: SCLAlertView.SCLAppearance?
+    open var appearance: StyledMenuPopoverConfiguration?
     open var buttonBackgroundColor: UIColor?
     open var closeButtonBackgroundColor: UIColor?
     open var closeButtonTextColor: UIColor?
     open var buttonTextColor: UIColor?
     open var recorderTintColor: UIColor?
     open var recorderHighlightedTintColor: UIColor?
+
+    open var titleFont: UIFont = UIFont.systemFont(ofSize: 18)
+    open var subtitleFont: UIFont = UIFont.systemFont(ofSize: 12)
+    open var buttonTextFont: UIFont = UIFont.systemFont(ofSize: 14)
+    open var closeButtonTextFont: UIFont = UIFont.systemFont(ofSize: 14)
 
     /// Custom UI text (skips localization)
     open var takePhotoText: String? = nil
@@ -212,7 +218,7 @@ open class MediaSelection: NSObject {
         return retval
         }()
     
-    fileprivate var alertController: SCLAlertView? = nil
+    fileprivate var alertController: StyledMenuPopover? = nil
     
     // MARK: - Localization
     
@@ -285,82 +291,115 @@ open class MediaSelection: NSObject {
             showDefaultCloseButton = false
         }
 
-        if let appearance = self.appearance {
-            self.alertController = SCLAlertView(appearance: appearance)
-        }
-        else {
-            let appearance = SCLAlertView.SCLAppearance(showCloseButton: showDefaultCloseButton)
-            self.alertController = SCLAlertView(appearance: appearance)
+        var configuration = self.appearance
+        if configuration == nil {
+            configuration = StyledMenuPopoverConfiguration()
+            configuration?.closeButtonEnabled = showDefaultCloseButton
+            configuration?.menuItemSize = CGSize(width: 200, height: 40)
+            configuration?.displayType = .normal
+            configuration?.showTitleInHeader = false
+            if self.headIcon == nil {
+                configuration?.showHeader = false
+            }
         }
         
-        let buttonBGColor = self.buttonBackgroundColor ?? UIColor.white
         let buttonTextColor = self.buttonTextColor ?? UIColor.black
         let rTintColor = self.recorderTintColor ?? UIColor.blue
         let rHighlightedTintColor = self.recorderHighlightedTintColor ?? UIColor.red
+        configuration?.menuItemStyleColor = self.buttonBackgroundColor ?? UIColor.white
+        configuration?.closeButtonStyleColor = self.closeButtonBackgroundColor ?? UIColor.white
+        configuration?.headerIconBackgroundColor = self.headIconBackgroundColor ?? UIColor.clear
+
+        var items: [FlexCollectionItem] = []
         for (title, source) in titleToSource {
-            alertController!.addButton(self.textForButtonWithTitle(title), backgroundColor: buttonBGColor, textColor: buttonTextColor, action: {
-                if title == self.kMakeVoiceRecordingKey {
-                    let controller = IQAudioRecorderViewController()
-                    controller.delegate = self
-                    controller.title = "Recorder"
-                    controller.maximumRecordDuration = self.voiceRecordingMaximumDuration
-                    controller.allowCropping = self.allowsEditing
-                    controller.barStyle = UIBarStyle.default
-                    controller.normalTintColor = rTintColor
-                    controller.highlightedTintColor = rHighlightedTintColor
-                    self.presentAudioRecorderViewControllerAnimated(controller)
-                }
-                else {
-                    self.imagePicker.sourceType = source
-                    self.selectedSource = source
-                    if source == .camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.front) {
-                        self.imagePicker.cameraDevice = .front
-                    }
-                    // set the media type: photo or video
-                    var mediaTypes = [String]()
-                    if title == self.kTakePhotoOrVideoKey || title == self.kChooseFromPhotoOrVideoLibraryKey {
-                        self.imagePicker.videoQuality = self.videoQuality
-                        self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
-                        self.imagePicker.allowsEditing = false
-                        mediaTypes.append(String(kUTTypeMovie))
-                        mediaTypes.append(String(kUTTypeImage))
-                    }
-                    else if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
-                        self.imagePicker.videoQuality = self.videoQuality
-                        self.imagePicker.allowsEditing = self.allowsEditing
-                        self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
-                        mediaTypes.append(String(kUTTypeMovie))
+            let buttonText = self.textForButtonWithTitle(title)
+            let abt = self.applyFontAndColorToString(self.buttonTextFont, color: buttonTextColor, text: buttonText)
+            let menuItem = FlexBaseCollectionItem(reference: UUID().uuidString, text: abt)
+            items.append(menuItem)
+            menuItem.itemSelectionActionHandler = {
+                DispatchQueue.main.async {
+                    self.alertController?.hide()
+                    if title == self.kMakeVoiceRecordingKey {
+                        let controller = IQAudioRecorderViewController()
+                        controller.delegate = self
+                        controller.title = "Recorder"
+                        controller.maximumRecordDuration = self.voiceRecordingMaximumDuration
+                        controller.allowCropping = self.allowsEditing
+                        controller.barStyle = UIBarStyle.default
+                        controller.normalTintColor = rTintColor
+                        controller.highlightedTintColor = rHighlightedTintColor
+                        self.presentAudioRecorderViewControllerAnimated(controller)
                     }
                     else {
-                        self.imagePicker.allowsEditing = false
-                        mediaTypes.append(String(kUTTypeImage))
+                        self.imagePicker.sourceType = source
+                        self.selectedSource = source
+                        if source == .camera && self.defaultsToFrontCamera && UIImagePickerController.isCameraDeviceAvailable(.front) {
+                            self.imagePicker.cameraDevice = .front
+                        }
+                        // set the media type: photo or video
+                        var mediaTypes = [String]()
+                        if title == self.kTakePhotoOrVideoKey || title == self.kChooseFromPhotoOrVideoLibraryKey {
+                            self.imagePicker.videoQuality = self.videoQuality
+                            self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
+                            self.imagePicker.allowsEditing = false
+                            mediaTypes.append(String(kUTTypeMovie))
+                            mediaTypes.append(String(kUTTypeImage))
+                        }
+                        else if title == self.kTakeVideoKey || title == self.kChooseFromVideoLibraryKey {
+                            self.imagePicker.videoQuality = self.videoQuality
+                            self.imagePicker.allowsEditing = self.allowsEditing
+                            self.imagePicker.videoMaximumDuration = self.videoMaximumDuration
+                            mediaTypes.append(String(kUTTypeMovie))
+                        }
+                        else {
+                            self.imagePicker.allowsEditing = false
+                            mediaTypes.append(String(kUTTypeImage))
+                        }
+                        self.imagePicker.mediaTypes = mediaTypes
+                        
+                        self.presentAVViewController(self.imagePicker, source: source)
                     }
-                    self.imagePicker.mediaTypes = mediaTypes
-                    
-                    self.presentAVViewController(self.imagePicker, source: source)
                 }
-            })
+            }
         }
         
         if let cbt = self.customButtonText {
-            alertController!.addButton(cbt, backgroundColor: buttonBGColor, textColor: buttonTextColor, action: {
-                self.customButtonPressed?()
-            })
+            let abt = self.applyFontAndColorToString(self.buttonTextFont, color: buttonTextColor, text: cbt)
+            let menuItem = FlexBaseCollectionItem(reference: UUID().uuidString, text: abt)
+            items.append(menuItem)
+            menuItem.itemSelectionActionHandler = {
+                DispatchQueue.main.async {
+                    self.alertController?.hide()
+                    self.customButtonPressed?()
+                }
+            }
         }
         
         if !showDefaultCloseButton {
-            alertController!.addButton("Close", backgroundColor: closeButtonBackgroundColor, textColor: closeButtonTextColor, action: {
-                self.alertController?.dismiss(animated: true)
-            })
+            let abt = self.applyFontAndColorToString(self.closeButtonTextFont, color: closeButtonTextColor ?? .black, text: "Close")
+            let menuItem = FlexBaseCollectionItem(reference: UUID().uuidString, text: abt)
+            items.append(menuItem)
+            menuItem.itemSelectionActionHandler = {
+                DispatchQueue.main.async {
+                    self.alertController?.hide()
+                }
+            }
         }
 
-        let cbt = showDefaultCloseButton ? "Close" : nil
-        if let icon = self.headIcon {
-            let headIconBGColor = self.headIconBackgroundColor ?? UIColor.clear
-            let _ = self.alertController!.showCustom(self.title, subTitle: self.subtitle, color: headIconBGColor, icon: icon, closeButtonTitle: cbt)
-        }
-        else {
-            self.alertController!.showInfo(self.title, subTitle: self.subtitle, closeButtonTitle: cbt)
+        if let configuration = configuration {
+            self.alertController = StyledMenuPopover(frame: UIScreen.main.bounds, configuration: configuration)
+            self.alertController?.preferredSize = CGSize(width: 200, height: 200)
+            for mi in items {
+                self.alertController?.addMenuItem(mi)
+            }
+            let title = self.applyFontAndColorToString(self.titleFont, color: .black, text: self.title)
+            let subtitle = self.applyFontAndColorToString(self.subtitleFont, color: .black, text: self.subtitle)
+            if let icon = self.headIcon {
+                self.alertController?.show(title: title, subTitle: subtitle, icon: icon)
+            }
+            else {
+                self.alertController?.show(title: title, subTitle: subtitle)
+            }
         }
     }
     
@@ -384,10 +423,17 @@ open class MediaSelection: NSObject {
      *  and you want to go back to a default state of the UI.
      */
     open func dismiss() {
-        alertController?.hideView()
+        alertController?.hide()
         imagePicker.dismiss(animated: true, completion: nil)
     }
     
+    func applyFontAndColorToString(_ font: UIFont, color: UIColor, text: String) -> NSAttributedString {
+        let attributedString = NSAttributedString(string: text, attributes:
+            [   NSAttributedStringKey.font : font,
+                NSAttributedStringKey.foregroundColor: color
+            ])
+        return attributedString
+    }
 }
 
 extension MediaSelection : UIImagePickerControllerDelegate, UINavigationControllerDelegate, RSKImageCropViewControllerDelegate, IQAudioRecorderViewControllerDelegate {
